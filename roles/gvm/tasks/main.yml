@@ -1,0 +1,33 @@
+- name: Copy Docker Compose file
+  copy:
+    src: docker-compose.yml
+    dest: /opt/gvm/
+  register: docker_compose_file
+
+- name: Create the directory for gvm unix socket
+  file:
+    path: /var/gvmd
+    state: directory
+    mode: '0777'
+
+- name: Install required apt packages
+  apt:
+    name: "{{ apt_packages }}"
+
+- name: Install required pip packages
+  pip:
+    name: "{{ pip_packages }}"
+
+- name: Query whether gvm container exists
+  docker_container_info:
+    name: greenbone-community-edition_gsa_1
+  register: container
+
+- name: Pull and launch GVM images if not up yet
+  docker_compose:
+    project_src: /opt/gvm
+    project_name: greenbone-community-edition
+  environment:
+    DOCKER_CLIENT_TIMEOUT: "999"
+    COMPOSE_HTTP_TIMEOUT: "999"
+  when: container.exists is false

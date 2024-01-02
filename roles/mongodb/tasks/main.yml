@@ -1,0 +1,25 @@
+- name: Import MongoDB GPG Key
+  apt_key:
+    url: "{{ mongodb_gpg }}"
+    state: present
+
+- name: Add MongoDB repository
+  apt_repository:
+    repo: "{{ mongodb_repo }}"
+    state: present
+
+- name: Install MongoDB requirements
+  apt:
+    name: "{{ mongodb_requirements }}"
+    update_cache: yes
+
+- name: Install mongoDB packages
+  apt:
+    name: "{{ mongodb_packages }}"
+    update_cache: yes
+
+- name: Start MongoDB service
+  service:
+    name: mongod
+    state: started
+    enabled: yes

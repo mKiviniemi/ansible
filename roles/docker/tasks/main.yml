@@ -1,0 +1,26 @@
+---
+- name: Add Docker GPG key
+  apt_key:
+    url: "{{ docker_gpg }}"
+    state: present
+
+- name: Add Docker repository
+  apt_repository:
+    repo: "{{ docker_repo }}"
+    state: present
+
+- name: Install docker packages
+  apt:
+    name: "{{ docker_packages }}"
+    update_cache: yes
+
+- name: Add user to docker group
+  user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: yes
+  register: user_result
+
+- name: Reboot to apply docker group changes
+  reboot:
+  when: user_result.changed
