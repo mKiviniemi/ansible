@@ -1,4 +1,4 @@
 apt_packages:
   - python3-pip
 pip_packages:
-  - docker
+  - docker==6.1.3
